@@ -6,21 +6,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static jm.task.core.jdbc.util.MySQLConnUtils.getMySQLConnection;
+import static jm.task.core.jdbc.util.Util.getMyConnection;
 
 public class UserDaoJDBCImpl implements UserDao {
-    private Connection conn;
-    private Statement statement;
-
-    public UserDaoJDBCImpl() {
-        try {
-            conn = getMySQLConnection();
-            statement = conn.createStatement();
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public void createUsersTable() {
         String sql = "CREATE TABLE IF NOT EXISTS users (" +
                 " id BIGINT NOT NULL AUTO_INCREMENT," +
@@ -28,18 +16,18 @@ public class UserDaoJDBCImpl implements UserDao {
                 " lastName VARCHAR(45) NOT NULL," +
                 " age INT NULL," +
                 " PRIMARY KEY (id))";
-        try {
-            statement.executeUpdate(sql);
-        } catch (SQLException e) {
+        try (Connection conn = getMyConnection()) {
+            conn.createStatement().executeUpdate(sql);
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void dropUsersTable() {
         String sql = "DROP TABLE IF EXISTS users";
-        try {
-            statement.executeUpdate(sql);
-        } catch (SQLException e) {
+        try (Connection conn = getMyConnection()) {
+            conn.createStatement().executeUpdate(sql);
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -47,23 +35,23 @@ public class UserDaoJDBCImpl implements UserDao {
     public void saveUser(String name, String lastName, byte age) {
         String sql = "INSERT INTO users(name, lastName, age) values (?, ?, ?)";
 
-        try {
+        try (Connection conn = getMyConnection()) {
             PreparedStatement pstmt = conn.prepareStatement(sql,
                     Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, name);
             pstmt.setString(2, lastName);
             pstmt.setByte(3, age);
             pstmt.executeUpdate();
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void removeUserById(long id) {
         String sql = "DELETE FROM users WHERE id = " + id;
-        try {
-            statement.executeUpdate(sql);
-        } catch (SQLException e) {
+        try (Connection conn = getMyConnection()) {
+            conn.createStatement().executeUpdate(sql);
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -71,8 +59,8 @@ public class UserDaoJDBCImpl implements UserDao {
     public List<User> getAllUsers() {
         String sql = "SELECT * FROM users";
         List<User> users = new ArrayList<>();
-        try {
-            ResultSet resultSet = statement.executeQuery(sql);
+        try (Connection conn = getMyConnection()) {
+            ResultSet resultSet = conn.createStatement().executeQuery(sql);
             while (resultSet.next()) {
                 User user = new User(
                         resultSet.getString(2),
@@ -81,16 +69,16 @@ public class UserDaoJDBCImpl implements UserDao {
                 users.add(user);
             }
             return users;
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void cleanUsersTable() {
         String sql = "DELETE FROM users";
-        try {
-            statement.executeUpdate(sql);
-        } catch (SQLException e) {
+        try (Connection conn = getMyConnection()) {
+            conn.createStatement().executeUpdate(sql);
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
