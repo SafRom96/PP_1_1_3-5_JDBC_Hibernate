@@ -18,7 +18,7 @@ public class UserDaoJDBCImpl implements UserDao {
                 " PRIMARY KEY (id))";
         try (Connection conn = getMyConnection()) {
             conn.createStatement().executeUpdate(sql);
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
@@ -27,7 +27,7 @@ public class UserDaoJDBCImpl implements UserDao {
         String sql = "DROP TABLE IF EXISTS users";
         try (Connection conn = getMyConnection()) {
             conn.createStatement().executeUpdate(sql);
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
@@ -42,7 +42,7 @@ public class UserDaoJDBCImpl implements UserDao {
             pstmt.setString(2, lastName);
             pstmt.setByte(3, age);
             pstmt.executeUpdate();
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
@@ -51,7 +51,7 @@ public class UserDaoJDBCImpl implements UserDao {
         String sql = "DELETE FROM users WHERE id = " + id;
         try (Connection conn = getMyConnection()) {
             conn.createStatement().executeUpdate(sql);
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
@@ -69,7 +69,7 @@ public class UserDaoJDBCImpl implements UserDao {
                 users.add(user);
             }
             return users;
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
@@ -78,7 +78,7 @@ public class UserDaoJDBCImpl implements UserDao {
         String sql = "DELETE FROM users";
         try (Connection conn = getMyConnection()) {
             conn.createStatement().executeUpdate(sql);
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
